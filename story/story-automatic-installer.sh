@@ -224,7 +224,7 @@ install_story_node() {
     install_cosmovisor
 
     # Initialize Story node
-    $HOME/.story/story/cosmovisor/genesis/bin/story init --network odyssey --moniker "$moniker"
+    $HOME/.story/story/cosmovisor/genesis/bin/story init --network story --moniker "$moniker"
 
     # Initialize Cosmovisor
     cosmovisor init $HOME/.story/story/cosmovisor/genesis/bin/story
