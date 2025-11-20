@@ -5,8 +5,8 @@ export GO_VERSION="1.23.2"
 
 _COSMOVISOR_VERSION="v1.6.0"
 
-_INIT_STORY_GETH_VERSION="0.10.1"
-_INIT_STORY_VERSION="0.12.0"
+_INIT_STORY_GETH_VERSION="1.1.2"
+_INIT_STORY_VERSION="1.4.1"
 
 # URL of the update script to download
 _UPDATE_SCRIPT_URL="https://raw.githubusercontent.com/DeSpread/despread-assets/refs/heads/main/story/story-automatic-update.sh"
@@ -101,7 +101,7 @@ install_cosmovisor() {
 # Update node peers
 update_node_peers() {
   echo "Update peers in progress..."
-  PEERS=$(curl -sS http://51.222.40.62:8010/net_info |
+  PEERS=$(curl -sS http://178.63.68.87:8080/net_info |
     jq -r '.result.peers[] | select(.node_info.id != null and .remote_ip != null and .node_info.listen_addr != null) |
     "\(.node_info.id)@\(if .node_info.listen_addr | contains("0.0.0.0") then .remote_ip + ":" + (.node_info.listen_addr | sub("tcp://0.0.0.0:"; "")) else (.node_info.listen_addr | sub("tcp://"; "")) end)"' |
     paste -sd ',')
