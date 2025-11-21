@@ -118,7 +118,9 @@ download_snapshots() {
     echo "Download and extract snapshots in progress..."
     wget -O story_snapshot.tar.gz https://fn.mainnet.story.despreadlabs.io/story/latest.tar.gz
     wget -O story_geth_snapshot.tar.gz https://fn.mainnet.story.despreadlabs.io/geth/latest.tar.gz
+    echo "Extract data of story in progress..."
     tar -xzf story_snapshot.tar.gz -C $HOME/.story/story/data
+    echo "Extract data of geth in progress..."
     mkdir -p $HOME/.story/geth/story/geth/chaindata
     tar -xzf story_geth_snapshot.tar.gz -C $HOME/.story/geth/story/geth/chaindata
     sudo rm story_snapshot.tar.gz
