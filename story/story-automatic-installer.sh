@@ -8,13 +8,6 @@ _COSMOVISOR_VERSION="v1.6.0"
 _INIT_STORY_GETH_VERSION="1.1.2"
 _INIT_STORY_VERSION="1.4.1"
 
-# URL of the update script to download
-_UPDATE_SCRIPT_URL="https://raw.githubusercontent.com/DeSpread/despread-assets/refs/heads/main/story/story-automatic-update.sh"
-# Path to save the update script
-_UPDATE_SCRIPT_PATH="/usr/local/bin/story-automatic-update.sh"
-# Path for the systemd update service file
-_UPDATE_SERVICE_PATH="/etc/systemd/system/story-update.service"
-
 # Function to get AWS Geth binary URL
 get_aws_geth_binary_url() {
     local geth_version="$1"
@@ -121,6 +114,16 @@ update_node_peers() {
     fi
 }
 
+download_snapshots() {
+    echo "Download and extract snapshots in progress..."
+    wget -O story_snapshot.tar.gz https://fn.mainnet.story.despreadlabs.io/story/latest.tar.gz
+    wget -O story_geth_snapshot.tar.gz https://fn.mainnet.story.despreadlabs.io/geth/latest.tar.gz
+    tar -xzf story_snapshot.tar.gz -C $HOME/.story/story/data
+    tar -xzf story_geth_snapshot.tar.gz -C $HOME/.story/geth/story/geth/chaindata
+    sudo rm story_snapshot.tar.gz
+    sudo rm story_geth_snapshot.tar.gz
+}
+
 # Set up systemd services
 setup_systemd_services() {
     sudo tee /etc/systemd/system/story-geth.service > /dev/null <<EOF
@@ -173,48 +176,6 @@ EOF
     echo "Story node system daemon setup has been successfully completed."
 }
 
-setup_update_systemd_service() {
-  # 1. Download the script and install it
-  mkdir -p "/usr/local/bin"
-  echo "Downloading the script from $_UPDATE_SCRIPT_URL..."
-  sudo wget -q $_UPDATE_SCRIPT_URL -O $_UPDATE_SCRIPT_PATH
-
-  # 2. Grant execute permissions to the script
-  echo "Setting execute permission for the script..."
-  sudo chmod +x $_UPDATE_SCRIPT_PATH
-
-  # 3. Create the systemd service file
-  echo "Creating systemd service file..."
-  sudo tee $_UPDATE_SERVICE_PATH > /dev/null << EOF
-[Unit]
-Description=Story Automatic Update Service
-After=network.target
-
-[Service]
-User=$USER
-ExecStart=$_UPDATE_SCRIPT_PATH
-Restart=on-failure
-RestartSec=60
-LimitNOFILE=65535
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-  # 4. Reload systemd configuration
-  echo "Reloading systemd daemon..."
-  sudo systemctl daemon-reload
-
-  # 5. Enable and start the service
-  echo "Enabling and starting the story-update service..."
-  sudo systemctl enable story-update.service
-  sudo systemctl start story-update.service
-
-  # 6. Check the status
-  echo "Service 'story-update' has been installed and started. Checking the status..."
-  sudo systemctl status story-update.service
-}
-
 # Install the Story Node
 install_story_node() {
     read -p "Enter your node moniker: " moniker
@@ -234,14 +195,12 @@ install_story_node() {
     echo "Cosmovisor has been successfully installed"
 
     update_node_peers
+    download_snapshots
     setup_systemd_services
 
     echo "Story Node has been successfully installed."
 
-    sleep 60
-
-    # Set up for next bump
-    setup_update_systemd_service
+    # sleep 60
 
     while true; do
         echo -e "\nWhat would you like to do next?"
