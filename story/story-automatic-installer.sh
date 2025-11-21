@@ -119,6 +119,7 @@ download_snapshots() {
     wget -O story_snapshot.tar.gz https://fn.mainnet.story.despreadlabs.io/story/latest.tar.gz
     wget -O story_geth_snapshot.tar.gz https://fn.mainnet.story.despreadlabs.io/geth/latest.tar.gz
     tar -xzf story_snapshot.tar.gz -C $HOME/.story/story/data
+    mkdir -p $HOME/.story/geth/story/geth/chaindata
     tar -xzf story_geth_snapshot.tar.gz -C $HOME/.story/geth/story/geth/chaindata
     sudo rm story_snapshot.tar.gz
     sudo rm story_geth_snapshot.tar.gz
