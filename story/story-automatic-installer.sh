@@ -94,7 +94,7 @@ install_cosmovisor() {
 # Update node peers
 update_node_peers() {
   echo "Update peers in progress..."
-  PEERS=$(curl -sS http://178.63.68.87:8080/net_info |
+  PEERS=$(curl -sS https://rpc.cosmos.mainnet.story.despreadlabs.io/net_info |
     jq -r '.result.peers[] | select(.node_info.id != null and .remote_ip != null and .node_info.listen_addr != null) |
     "\(.node_info.id)@\(if .node_info.listen_addr | contains("0.0.0.0") then .remote_ip + ":" + (.node_info.listen_addr | sub("tcp://0.0.0.0:"; "")) else (.node_info.listen_addr | sub("tcp://"; "")) end)"' |
     paste -sd ',')
@@ -258,7 +258,7 @@ check_sync_status() {
     trap 'return' INT
     while true; do
         local_height=$(curl -s localhost:26657/status | jq -r '.result.sync_info.latest_block_height')
-        network_height=$(curl -sS http://178.63.68.87:8080/status | jq -r '.result.sync_info.latest_block_height')
+        network_height=$(curl -sS https://rpc.cosmos.mainnet.story.despreadlabs.io/status | jq -r '.result.sync_info.latest_block_height')
         blocks_left=$((network_height - local_height))
 
         printf "\033[1;32mYour node height:\033[0m \033[1;34m$local_height\033[0m | \033[1;33mNetwork height:\033[0m \033[1;36m$network_height\033[0m | \033[1;37mBlocks left:\033[0m \033[1;31m$blocks_left\033[0m\n"
