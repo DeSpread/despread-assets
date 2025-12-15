@@ -6,7 +6,7 @@ export GO_VERSION="1.23.2"
 _COSMOVISOR_VERSION="v1.6.0"
 
 _INIT_STORY_GETH_VERSION="1.1.2"
-_INIT_STORY_VERSION="1.4.1"
+_INIT_STORY_VERSION="1.4.2"
 
 # Function to get AWS Geth binary URL
 get_aws_geth_binary_url() {
